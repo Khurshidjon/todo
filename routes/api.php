@@ -18,17 +18,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-
 Route::group(['middleware' => 'api'], function (){
     Route::get('/home', 'API\ApiController@page')->name('api.page');
 
-/*Authorized*/
-
-    Route::post('/posts/register', 'API\ApiController@register')->middleware('auth:api');
-    Route::post('/posts/login', 'API\ApiController@login')->middleware('auth:api');
-    Route::post('/posts/logout', 'API\ApiController@logout')->middleware('auth:api');
-
-/*End Authorized*/
-
     Route::resource('posts', 'API\ApiController');
+
+    /*Authorized*/
+
+    Route::post('/posts/register', 'API\ApiController@register')->middleware('session');
+
+    Route::post('/posts/login', 'API\ApiController@login');
+
+
+    Route::post('/posts/logout', 'API\ApiController@logout')->middleware('auth');
+
+    /*End Authorized*/
+
 });
+

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
     <title>Document</title>
 </head>
-<body>
+<body id="body">
     <div class="container">
         <nav class="nav navbar-expand-md navbar-light">
             <a href="" class="nav navbar-brand">API crud</a>
@@ -22,9 +22,9 @@
                             {{ Auth::user()->name }} <span class="caret"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="logoutDropdown">
-                            <form action="" method="post">
+                            <form action="">
                                 {{ csrf_field() }}
-                                <button class="dropdown-item btn btn-outline-light" href="" id="logout-user">Logout</button>
+                                <button class="dropdown-item btn btn-outline-light" id="logout-user">Logout</button>
                             </form>
                         </div>
                     </li>

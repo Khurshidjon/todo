@@ -8,6 +8,9 @@
             <div class="modal-body">
                 <form action="" id="regisForm">
                     {{ csrf_field() }}
+{{--
+                    {{ method_field('POST') }}
+--}}
                     <div class="form-group">
                         <label for="name"></label>
                         <input id="name" type="text" class="form-control" name="name" placeholder="Username" required>

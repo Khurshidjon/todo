@@ -44,7 +44,7 @@ $(function () {
 
 //Add new User
 
-    $('#regs').click(function (e) {
+    $('body').on('click', '#regs', function (e) {
         e.preventDefault();
 
         var url2 = url + '/register';
@@ -74,6 +74,7 @@ $(function () {
             },
         });
     });
+
 /*End Add new User*/
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -103,7 +104,7 @@ $(function () {
             },
             success: function (data) {
                 $('#loginModal').modal('hide');
-                getDataInfo();
+                $('#body').load(location.href + '#body');
                 console.log(data);
             },
         });
@@ -117,19 +118,22 @@ $(function () {
     $('#logout-user').on('click', function (e) {
         e.preventDefault();
 
-        var LogoutURL = url + '/' + 'logout';
+        var LogoutURL = url + '/logout';
 
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content')
             }
         });
+
         $.ajax({
+            type: 'post',
             dataType: 'json',
-            url: LogoutURL,
-            type: 'POST',
+            data: {
+                url: LogoutURL,
+            },
             success: function (data) {
-                getDataInfo();
+                location.reload();
                 console.log(data);
             }
         })

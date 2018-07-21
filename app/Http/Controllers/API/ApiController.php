@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-/*use Illuminate\Support\Facades\Validator;*/
+use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
@@ -41,7 +41,7 @@ class ApiController extends Controller
 
     public function register(array $data)
     {
-            $validator = \Validator::make($data, [
+            $validator = Validator::make($data, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:6|confirmed',
@@ -53,10 +53,11 @@ class ApiController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => bcrypt($data['password']),
+                'api_token' => str_random(70),
             ]);
-        $success['token'] =  $user->createToken('MyApp')->accessToken;
+            $success = $user->api_token;
 
-        return response()->json(['success'=>$success], $this-> successStatus);
+        return response()->json(['success'=> $success], $this-> successStatus);
     }
 
 
@@ -71,11 +72,12 @@ class ApiController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        if(Auth::attempt(['email'=> \request('email'), 'password'=>\request('password')])){
+
+        if(Auth::attempt(['email'=> $request->input('email'), 'password'=>$request->input('password')])){
             $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->accessToken;
-            $success['name'] = $user->name;
-            $success['email'] = $user->email;
+            $user->api_token = str_random(70);
+            $user->save();
+            $success = $user->api_token;
             return response()->json(['success'=> $success], $this->successStatus);
         }else{
             return response()->json(['error'=>'Unauthorised'], 401);
@@ -83,21 +85,27 @@ class ApiController extends Controller
     }
 
 
-    public function logout()
+    public function logout(Request $request)
     {
-        $userToken = Auth::user()->token();
+/*        $userToken = Auth::user()->token();
         DB::table('oauth_refresh_tokens')->where('access_token_id', $userToken->id)->update([
             'revoked' => true,
         ]);
 
-        $userToken->revoke();
+        $userToken->revoke();*/
 
-        return response()->json('Bye Bye');
+        if (Auth::check()){
+                $user = Auth::user();
+                $user->api_token = null;
+                $user->save();
 
-        /*if(Auth::check()){
-            Auth::user()->AuthAccessToken()->delete();
-            return response()->json('Bye Bye');
-        }*/
+                return 'You were log out :(';
+        }
+        return response()->json([
+            'error' => 'Unauthorized',
+            'code' => 401
+        ], 401);
+
     }
 
 
